@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Megh Pakhi ❤️</title>
+
+  <style>
+    :root{
+      --bg1:#1a0006;
+      --bg2:#3b0012;
+      --card: rgba(255,255,255,.10);
+      --card2: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.75);
+      --accent:#ff3b6b;
+      --white:#ffffff;
+      --shadow: 0 18px 55px rgba(0,0,0,.35);
+      --radius: 22px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; }
+    body{
+      font-family: system-ui, -apple-system, "Noto Sans Bengali", "Hind Siliguri", Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, #550018 0%, transparent 55%),
+        radial-gradient(900px 600px at 90% 20%, #2b0010 0%, transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    /* “handwritten-ish” vibe with safe fallbacks */
+    .script{
+      font-family: "Segoe Script","Bradley Hand","Comic Sans MS","Snell Roundhand",cursive;
+      letter-spacing: .2px;
+    }
+
+    /* Floating hearts */
+    .hearts{
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      overflow:hidden;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.25));
+    }
+    .heart{
+      position:absolute;
+      width:14px; height:14px;
+      transform: rotate(45deg);
+      background: rgba(255, 78, 122, .55);
+      border-radius: 3px;
+      animation: floatUp linear infinite;
+      opacity:.9;
+    }
+    .heart:before, .heart:after{
+      content:"";
+      position:absolute;
+      width:14px; height:14px;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .heart:before{ left:-7px; top:0; }
+    .heart:after{ left:0; top:-7px; }
+
+    @keyframes floatUp{
+      from{ transform: translateY(110vh) rotate(45deg); opacity: 0; }
+      10%{ opacity:.85; }
+      to{ transform: translateY(-20vh) rotate(45deg); opacity: 0; }
+    }
+
+    /* Confetti */
+    #confettiCanvas{
+      position:fixed; inset:0; z-index:5; pointer-events:none;
+      display:none;
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      min-height:100%;
+      padding: 18px 14px 34px;
+      display:flex;
+      justify-content:center;
+    }
+    .container{
+      width:min(720px, 100%);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .card{
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    h1{
+      margin: 10px 0 6px;
+      font-size: clamp(26px, 5vw, 38px);
+      line-height: 1.1;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size: 14.5px;
+      line-height:1.6;
+    }
+
+    .nav{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .navBtn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 14px;
+      color: rgba(255,255,255,.92);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .navBtn:active{ transform: scale(.98); }
+    .navBtn.primary{
+      background: linear-gradient(135deg, #ff3b6b, #ff6f9e);
+      border:none;
+      box-shadow: 0 12px 26px rgba(255,59,107,.32);
+    }
+
+    .page{ display:none; }
+    .page.active{ display:block; }
+
+    .title{
+      margin:0 0 10px;
+      font-size: 18px;
+      color: rgba(255,255,255,.92);
+    }
+
+    .letter{
+      color: rgba(255,255,255,.90);
+      font-size: 15px;
+      line-height: 1.85;
+      margin:0;
+      white-space: pre-line;
+    }
+
+    .divider{
+      height:1px;
+      background: rgba(255,255,255,.14);
+      margin: 12px 0;
+    }
+
+    .softList{
+      display:grid;
+      gap:10px;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+    .softItem{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:12px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .dot{
+      width:10px; height:10px;
+      margin-top:6px;
+      border-radius:50%;
+      background: rgba(255,59,107,.95);
+      box-shadow: 0 0 0 6px rgba(255,59,107,.12);
+      flex:0 0 auto;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 14px;
+    }
+
+    button.btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 750;
+      font-size: 14.5px;
+      transition: transform .12s ease, opacity .2s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btnYes{
+      background: linear-gradient(135deg, #ff3b6b, #ff6f9e);
+      color: white;
+      box-shadow: 0 12px 26px rgba(255,59,107,.32);
+    }
+    .btnNo{
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.86);
+      opacity:0;
+      transform: translateY(6px);
+      pointer-events:none;
+    }
+    .btnNo.show{
+      opacity:1;
+      transform: translateY(0);
+      pointer-events:auto;
+    }
+    .btn:active{ transform: scale(.98); }
+
+    .hint{
+      margin-top:10px;
+      color: rgba(255,255,255,.72);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .center{ text-align:center; }
+
+    .shake{ animation: shake .35s ease; }
+    @keyframes shake{
+      0%,100%{ transform: translateX(0); }
+      20%{ transform: translateX(-8px); }
+      40%{ transform: translateX(8px); }
+      60%{ transform: translateX(-6px); }
+      80%{ transform: translateX(6px); }
+    }
+
+    .yayTitle{
+      font-size: clamp(28px, 6vw, 44px);
+      margin: 6px 0 4px;
+    }
+    .yayText{
+      margin:0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height:1.7;
+    }
+
+    /* Bouquet */
+    .bouquet{
+      display:flex;
+      justify-content:center;
+      margin: 14px 0 2px;
+    }
+    .bouquet svg{
+      width:min(360px, 92%);
+      height:auto;
+      filter: drop-shadow(0 14px 26px rgba(0,0,0,.35));
+    }
+
+    .footerNote{
+      margin-top: 10px;
+      color: rgba(255,255,255,.74);
+      font-size: 13.5px;
+      line-height:1.6;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confettiCanvas"></canvas>
+  <div class="hearts" id="hearts"></div>
+
+  <div class="wrap">
+    <div class="container">
+
+      <!-- PAGE: HOME -->
+      <section class="page active" id="home">
+        <div class="card">
+          <span class="badge">❤️ Valentine Website for <strong>Megh Pakhi</strong></span>
+          <h1 class="script">Hey Pakhi… 🤍</h1>
+          <p class="subtitle">
+            এটা ছোট্ট একটা ওয়েবসাইট, কিন্তু ভেতরে আমার অনেকটা মন আছে।
+            <br/>আর হ্যাঁ… আমি এখনো তোমার <strong>Motu Shafayat</strong> 😌
+          </p>
+
+          <div class="nav">
+            <button class="navBtn primary" data-go="letter">চিঠি পড়ো 💌</button>
+            <button class="navBtn" data-go="reasons">Little Things ✨</button>
+            <button class="navBtn" data-go="proposal">Proposal ❤️</button>
+          </div>
+
+          <p class="hint">
+            (Mobile এ best লাগবে। Scroll না করে নিচের বাটনগুলো দিয়ে “পেজ” পাল্টাবে।)
+          </p>
+        </div>
+      </section>
+
+      <!-- PAGE: LETTER -->
+      <section class="page" id="letter">
+        <div class="card">
+          <h2 class="title script">একটা চিঠি, শুধু তোমার জন্য 💌</h2>
+          <p class="letter">
+শুভ ভ্যালেন্টাইনস ডে, জান 💋💋💋
+
+এই মাসটা আমাদের জন্য সত্যিই অনেক special।
+এই মাসে আমার পাখির Birthday, আর আমাদের পথচলার ২ বছর complete।
+
+তোমাকে আমার জীবনে পাওয়া আমার life-এর সবচেয়ে সুন্দর ঘটনা—যেটা আমার সঙ্গে হয়েছে।
+তুমি শুধু আমার ভালোবাসার মানুষ না, তুমি আমার জীবনের সবচেয়ে important person।
+তুমি আমার কাছে সবচেয়ে precious, সবচেয়ে আপন।
+
+আমার মতো ভাগ্যবান পুরুষ আর কেউ নেই—যে এত সুন্দরী, আরও charming একটা মানুষকে পেয়েছে।
+
+পাখি, আমার জীবনটাকে এত সুন্দর করে দেওয়ার জন্য thank you।
+তুমি আমাকে যে ভাবে care করো, আগলে রাখো… সেটাই আমার সবচেয়ে বড় শান্তি।
+আমাকে “বাঁচানোর” জন্যও thank you।
+
+আমি ভীষণ grateful যে তুমি আমাকে এত ভালোবাসো।
+আমি তোমাকে আমার জীবনের চেয়েও বেশি ভালোবাসি।
+আমার সবকিছু বলতে… সত্যিই শুধু তুমিই আছো।
+
+I love you, জান 💋💋💋💋💋💋💋💋💋💋💋
+          </p>
+
+          <div class="divider"></div>
+
+          <div class="nav">
+            <button class="navBtn" data-go="home">Home</button>
+            <button class="navBtn primary" data-go="reasons">Next: Little Things ✨</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: REASONS -->
+      <section class="page" id="reasons">
+        <div class="card">
+          <h2 class="title script">Little things I love about you ✨</h2>
+
+          <ul class="softList">
+            <li class="softItem">
+              <span class="dot"></span>
+              <div>
+                <div class="script" style="font-weight:700;">তোমার ভালোবাসা, তোমার care…</div>
+                <div style="color:rgba(255,255,255,.78); font-size:13.8px; line-height:1.7;">
+                  মাঝে মাঝে শুধু তোমার presence-ই আমার সব tension কমিয়ে দেয়।
+                </div>
+              </div>
+            </li>
+
+            <li class="softItem">
+              <span class="dot"></span>
+              <div>
+                <div class="script" style="font-weight:700;">রাগ করলে তোমার পাউটটা 😒 (কিন্তু cute)</div>
+                <div style="color:rgba(255,255,255,.78); font-size:13.8px; line-height:1.7;">
+                  তখনই বুঝি… আমার Bou-র mood ঠিক করা আমার responsibility 😌
+                </div>
+              </div>
+            </li>
+
+            <li class="softItem">
+              <span class="dot"></span>
+              <div>
+                <div class="script" style="font-weight:700;">তুমি যেভাবে আমার দিকে তাকাও…</div>
+                <div style="color:rgba(255,255,255,.78); font-size:13.8px; line-height:1.7;">
+                  আর যখন mirror ধরে lipstick দাও… মনে হয় সময়টা একটু থেমে যায়।
+                </div>
+              </div>
+            </li>
+          </ul>
+
+          <p class="hint">
+            আমার একটা কথা মনে রেখো:
+            <span class="script">আমি always তোমার পাশে আছি… তোমার হাত কখনো ছাড়বো না।</span> 🤍
+          </p>
+
+          <div class="nav">
+            <button class="navBtn" data-go="letter">Back: Letter</button>
+            <button class="navBtn primary" data-go="proposal">Next: Proposal ❤️</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: PROPOSAL -->
+      <section class="page" id="proposal">
+        <div class="card">
+          <h2 class="title script">Proposal ❤️</h2>
+          <p class="letter">
+আমি অন্য সব couple দের মতো celebrate করি না,
+কিন্তু জান… এই দিনটা আমাদের জন্য অনেক special।
+
+কারণ আমাদের ২ বছরের পথচলা সম্পূর্ণ হয়েছে।
+
+জান, এই special দিনটা আমার সাথে কাটিয়ে,
+এই দিনটা আরও special করে…
+আমাদের সম্পর্কের নতুন বছর start করবে, জান?
+          </p>
+
+          <div class="actions">
+            <button class="btn btnYes" id="yesBtn">Yes, জান ❤️</button>
+            <button class="btn btnNo" id="noBtn">No</button>
+          </div>
+
+          
+
+          <div class="divider"></div>
+
+          <div class="nav">
+            <button class="navBtn" data-go="home">Home</button>
+            <button class="navBtn" data-go="reasons">Back: Little Things</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: YES -->
+      <section class="page" id="yesPage">
+        <div class="card center">
+          <span class="badge" style="justify-content:center; width:fit-content; margin: 0 auto;">🤍  Red | Soft & Sweet</span>
+
+          <h2 class="yayTitle script">Yay! ✨</h2>
+          <p class="yayText">
+            পাখি… তুমি “হ্যাঁ” বলায় পাখি, তোমার উত্তর শুনে আমি অনেক খুশি হলাম।
+            <br/>আমি always তোমার পাশে আছি। 🤍
+          </p>
+
+          <div class="bouquet" aria-label="White frangipani bouquet">
+            <svg viewBox="0 0 900 520" role="img">
+              <defs>
+                <radialGradient id="petal" cx="50%" cy="50%" r="60%">
+                  <stop offset="0%" stop-color="#ffffff"/>
+                  <stop offset="70%" stop-color="#ffffff"/>
+                  <stop offset="100%" stop-color="#f0f0f0"/>
+                </radialGradient>
+                <radialGradient id="center" cx="50%" cy="50%" r="60%">
+                  <stop offset="0%" stop-color="#ffe7a6"/>
+                  <stop offset="60%" stop-color="#ffd36a"/>
+                  <stop offset="100%" stop-color="#ffb83b"/>
+                </radialGradient>
+                <linearGradient id="leaf" x1="0" x2="1">
+                  <stop offset="0%" stop-color="#2fd17c"/>
+                  <stop offset="100%" stop-color="#0f8c4f"/>
+                </linearGradient>
+              </defs>
+
+              <path d="M120 420 C220 280, 360 260, 440 340 C340 470, 220 510, 120 420Z" fill="url(#leaf)" opacity=".9"/>
+              <path d="M740 420 C640 280, 500 260, 460 340 C540 470, 660 510, 740 420Z" fill="url(#leaf)" opacity=".9"/>
+
+              <g transform="translate(260,230) scale(1.05)">
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(0)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(72)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(144)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(216)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(288)"/>
+                <circle cx="0" cy="0" r="44" fill="url(#center)"/>
+              </g>
+
+              <g transform="translate(450,190) scale(1.2)">
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(0)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(72)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(144)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(216)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(288)"/>
+                <circle cx="0" cy="0" r="44" fill="url(#center)"/>
+              </g>
+
+              <g transform="translate(635,250) scale(1.0)">
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(0)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(72)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(144)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(216)"/>
+                <ellipse cx="0" cy="-70" rx="80" ry="120" fill="url(#petal)" transform="rotate(288)"/>
+                <circle cx="0" cy="0" r="44" fill="url(#center)"/>
+              </g>
+            </svg>
+          </div>
+
+          <p class="footerNote">
+            Bou… <span class="script">আমি always তোমার পাশে আছি, তোমার হাত কখনো ছাড়বো না।</span> 🤍
+          </p>
+
+          <div class="nav" style="justify-content:center;">
+            <button class="navBtn primary" data-go="proposal">Back to Proposal</button>
+            <button class="navBtn" data-go="home">Home</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: NO -->
+      <section class="page" id="noPage">
+        <div class="card center">
+          <h2 class="yayTitle script">Wrong choice 😌</h2>
+          <p class="yayText">
+            Bou… এইটা ভুল ছিল।
+            <br/>চলো আবার… ঠিকটা choose করি 🤍
+          </p>
+
+          <div class="nav" style="justify-content:center; margin-top:16px;">
+            <button class="navBtn primary" data-go="proposal">Try again ❤️</button>
+          </div>
+
+          <p class="footerNote">
+            (Hint: আমার answer তো fixed 😏)
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    // ===== Hearts background =====
+    const hearts = document.getElementById('hearts');
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+
+    function createHeart(){
+      const h = document.createElement('div');
+      h.className = 'heart';
+      const size = rand(10, 20);
+      h.style.width = size + 'px';
+      h.style.height = size + 'px';
+      h.style.left = rand(0, 100) + 'vw';
+      h.style.animationDuration = rand(7, 14) + 's';
+      h.style.animationDelay = rand(0, 7) + 's';
+      h.style.opacity = rand(.35, .9);
+      hearts.appendChild(h);
+      const total = parseFloat(h.style.animationDuration) * 1000 + parseFloat(h.style.animationDelay) * 1000;
+      setTimeout(() => h.remove(), total + 1000);
+    }
+    for(let i=0;i<26;i++) createHeart();
+    setInterval(createHeart, 700);
+
+    // ===== Page navigation =====
+    const pages = Array.from(document.querySelectorAll('.page'));
+    function show(id){
+      pages.forEach(p => p.classList.remove('active'));
+      const el = document.getElementById(id);
+      if(el) el.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.querySelectorAll('[data-go]').forEach(btn=>{
+      btn.addEventListener('click', ()=> show(btn.getAttribute('data-go')));
+    });
+
+    // ===== Proposal buttons logic =====
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+    const noHint = document.getElementById('noHint');
+
+    // No visible after 2 seconds
+    setTimeout(() => {
+      noBtn.classList.add('show');
+      if(noHint) noHint.textContent = "(*এখন দেখা যাচ্ছে… but still wrong choice 😌*)";
+    }, 2000);
+
+    // No behavior: shake + change text + go to wrong page + loop back
+    const noTexts = ["No", "Are you sure?", "Think again 😌", "Try again", "Last chance 😶", "Okay… okay…"];
+    let noClicks = 0;
+
+    noBtn.addEventListener('click', () => {
+      noClicks++;
+
+      // shake
+      noBtn.classList.remove('shake');
+      void noBtn.offsetWidth;
+      noBtn.classList.add('shake');
+
+      // change label
+      const idx = Math.min(noClicks, noTexts.length - 1);
+      noBtn.textContent = noTexts[idx];
+
+      // after 2 clicks, go to NO page
+      if(noClicks >= 2){
+        show('noPage');
+      }
+    });
+
+    yesBtn.addEventListener('click', () => {
+      show('yesPage');
+      launchConfetti(1800);
+    });
+
+    // ===== Confetti =====
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas(){
+      canvas.width = window.innerWidth * devicePixelRatio;
+      canvas.height = window.innerHeight * devicePixelRatio;
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti(durationMs){
+      canvas.style.display = 'block';
+      const pieces = [];
+      const count = 180;
+
+      function r(min,max){ return Math.random()*(max-min)+min; }
+
+      for(let i=0;i<count;i++){
+        pieces.push({
+          x: r(0, window.innerWidth),
+          y: r(-window.innerHeight, 0),
+          w: r(6, 12),
+          h: r(8, 18),
+          vx: r(-1.4, 1.4),
+          vy: r(2.2, 4.6),
+          rot: r(0, Math.PI*2),
+          vr: r(-0.12, 0.12),
+          alpha: r(0.55, 0.95)
+        });
+      }
+
+      const start = performance.now();
+      function draw(t){
+        const elapsed = t - start;
+        ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
+
+        pieces.forEach((p, i) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vr;
+          if(p.y > window.innerHeight + 30) p.y = r(-60, -10);
+
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = (i % 3 === 0) ? "rgba(255,255,255,0.95)" : "rgba(255,59,107,0.85)";
+          ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+          ctx.restore();
+        });
+
+        if(elapsed < durationMs){
+          requestAnimationFrame(draw);
+        }else{
+          canvas.style.display = 'none';
+          ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+  </script>
+</body>
+</html>
